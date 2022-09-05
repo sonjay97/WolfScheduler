@@ -29,7 +29,7 @@ public class Course {
 	private int endTime;
 	
 	/**
-	 * Constructs a COurse object with values for all the fields.
+	 * Constructs a Course object with values for all the fields.
 	 * @param name name of the Course
 	 * @param title title of the Course
 	 * @param section section of the Course
@@ -62,12 +62,7 @@ public class Course {
 	 * @param meetingDays meeting days for Course as series of chars
 	 */
 	public Course(String name, String title, String section, int credits, String instructorId, String meetingDays) {
-		this.name = name;
-		this.title = title;
-		this.section = section;
-		this.credits = credits;
-		this.instructorId = instructorId;
-		this.meetingDays = meetingDays;
+		this(name, title, section, credits, instructorId, meetingDays, 0, 0);
 	}
 
 	/**
@@ -82,7 +77,7 @@ public class Course {
 	 * Sets the Course's name. 
 	 * @param name the name to set
 	 */
-	public void setName(String name) {
+	private void setName(String name) {
 		this.name = name;
 	}
 	
