@@ -3,9 +3,11 @@
  */
 package edu.ncsu.csc216.wolf_scheduler.course;
 
+import java.util.Objects;
+
 /**
  * @author jayshah
- *
+ * 
  */
 public class Course {
 	
@@ -25,6 +27,7 @@ public class Course {
 	private int startTime;
 	/** Course's ending time */
 	private int endTime;
+	
 	/**
 	 * Constructs a COurse object with values for all the fields.
 	 * @param name name of the Course
@@ -46,6 +49,25 @@ public class Course {
 		this.meetingDays = meetingDays;
 		this.startTime = startTime;
 		this.endTime = endTime;
+	}
+
+	/**
+	 * Creates a Course with the given name, title, section, credits, instructorId, and meetingDays for 
+     * courses that are arranged.
+     * @param name name of Course
+	 * @param title title of Course
+	 * @param section section of Course
+	 * @param credits credit hours for Course
+	 * @param instructorId instructor's unity id
+	 * @param meetingDays meeting days for Course as series of chars
+	 */
+	public Course(String name, String title, String section, int credits, String instructorId, String meetingDays) {
+		this.name = name;
+		this.title = title;
+		this.section = section;
+		this.credits = credits;
+		this.instructorId = instructorId;
+		this.meetingDays = meetingDays;
 	}
 
 	/**
@@ -176,6 +198,47 @@ public class Course {
 		this.endTime = endTime;
 	}
 	
+	/**
+	 * Generates a hashCode for Course using all fields.
+	 * @return hashCode for Course
+	 */
+	@Override
+	public int hashCode() {
+		return Objects.hash(credits, endTime, instructorId, meetingDays, name, section, startTime, title);
+	}
+
+	/**
+	 * Compares a give object to this object for equality on all fields.
+	 * @param obj the Object to compare
+	 * @return true if the objects are the same on all fields.
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Course other = (Course) obj;
+		return credits == other.credits && endTime == other.endTime && Objects.equals(instructorId, other.instructorId)
+				&& Objects.equals(meetingDays, other.meetingDays) && Objects.equals(name, other.name)
+				&& Objects.equals(section, other.section) && startTime == other.startTime
+				&& Objects.equals(title, other.title);
+	}
+	
+	/**
+	 * Returns a comma separated value String of all Course fields.
+	 * @return String representation of Course
+	 */
+	@Override
+	public String toString() {
+	    if (meetingDays.equals("A")) {
+	        return name + "," + title + "," + section + "," + credits + "," + instructorId + "," + meetingDays;
+	    }
+	    return name + "," + title + "," + section + "," + credits + "," + instructorId + "," + meetingDays + "," + startTime + "," + endTime; 
+	}
+
 	/**
 	 * @param args
 	 */
