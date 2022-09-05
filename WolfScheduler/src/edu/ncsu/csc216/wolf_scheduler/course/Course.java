@@ -6,8 +6,9 @@ package edu.ncsu.csc216.wolf_scheduler.course;
 import java.util.Objects;
 
 /**
+ * Class constructor for the WolfScheduler program 
  * @author jayshah
- * 
+ *
  */
 public class Course {
 	
@@ -71,14 +72,6 @@ public class Course {
 	 */
 	public String getName() {
 		return name;
-	}
-	
-	/**
-	 * Sets the Course's name. 
-	 * @param name the name to set
-	 */
-	private void setName(String name) {
-		this.name = name;
 	}
 	
 	/**
@@ -228,14 +221,15 @@ public class Course {
 	 */
 	@Override
 	public String toString() {
-	    if (meetingDays.equals("A")) {
+	    if ("A".equals(meetingDays)) {
 	        return name + "," + title + "," + section + "," + credits + "," + instructorId + "," + meetingDays;
 	    }
 	    return name + "," + title + "," + section + "," + credits + "," + instructorId + "," + meetingDays + "," + startTime + "," + endTime; 
 	}
 
 	/**
-	 * @param args
+	 * Main left unpopulated for now.
+	 * @param args args command line tools not used
 	 */
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
