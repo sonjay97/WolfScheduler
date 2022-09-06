@@ -75,6 +75,27 @@ public class Course {
 	}
 	
 	/**
+	 * Sets the Course's name. If the name is null, has a length less than 5 or more than 8,
+	 * does not contain a space between letter characters and number characters, has less than 1
+	 * or more than 4 letter characters, and not exactly three trailing digit characters, an
+	 * IllegalArgumentException is thrown.
+	 * @param name the name to set
+	 * @throws IllegalArgumentException if the name parameter is invalid
+	 */
+	private void setName(String name) {
+		
+		if (name==null) {
+			throw new IllegalArgumentException("Invalid course name.");
+		}
+		
+		if (name.length()<MIN_LENGTH || name.length()>MAX_LENGTH) {
+			throw new IllegalArgumentException("Invalid course name.");
+		}
+		
+		
+	}
+	
+	/**
 	 * Returns the Course's title.
 	 * @return the title
 	 */
