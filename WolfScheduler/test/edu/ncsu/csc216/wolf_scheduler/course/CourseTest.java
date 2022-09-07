@@ -405,18 +405,18 @@
 			// The code below is commented out until you make some changes to Course.
 			// Once those are made, remove the line of code fail() and uncomment the
 			// provided tests.
-			fail();
+			
 
-//			Course c1 = new Course(NAME, TITLE, SECTION, CREDITS, INSTRUCTOR_ID, MEETING_DAYS, START_TIME, END_TIME);
-//			assertEquals("MW 1:30PM-2:45PM", c1.getMeetingString());
-//			Course c2 = new Course(NAME, TITLE, SECTION, CREDITS, INSTRUCTOR_ID, MEETING_DAYS, 900, 1035);
-//			assertEquals("MW 9:00AM-10:35AM", c2.getMeetingString());
-//			Course c3 = new Course(NAME, TITLE, SECTION, CREDITS, INSTRUCTOR_ID, "A");
-//			assertEquals("Arranged", c3.getMeetingString());
-//			Course c4 = new Course(NAME, TITLE, SECTION, CREDITS, INSTRUCTOR_ID, "TH", 1145, 1425);
-//			assertEquals("TH 11:45AM-2:25PM", c4.getMeetingString());
-//			Course c5 = new Course(NAME, TITLE, SECTION, CREDITS, INSTRUCTOR_ID, "TH", 1200, 1300);
-//			assertEquals("TH 12:00PM-1:00PM", c5.getMeetingString());
+			Course c1 = new Course(NAME, TITLE, SECTION, CREDITS, INSTRUCTOR_ID, MEETING_DAYS, START_TIME, END_TIME);
+			assertEquals("MW 1:30PM-2:45PM", c1.getMeetingString());
+			Course c2 = new Course(NAME, TITLE, SECTION, CREDITS, INSTRUCTOR_ID, MEETING_DAYS, 900, 1035);
+			assertEquals("MW 9:00AM-10:35AM", c2.getMeetingString());
+			Course c3 = new Course(NAME, TITLE, SECTION, CREDITS, INSTRUCTOR_ID, "A");
+			assertEquals("Arranged", c3.getMeetingString());
+			Course c4 = new Course(NAME, TITLE, SECTION, CREDITS, INSTRUCTOR_ID, "TH", 1145, 1425);
+			assertEquals("TH 11:45AM-2:25PM", c4.getMeetingString());
+			Course c5 = new Course(NAME, TITLE, SECTION, CREDITS, INSTRUCTOR_ID, "TH", 1200, 1300);
+			assertEquals("TH 12:00PM-1:00PM", c5.getMeetingString());
 		}
 
 		/**
