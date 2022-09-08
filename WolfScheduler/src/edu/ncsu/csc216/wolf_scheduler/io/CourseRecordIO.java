@@ -9,7 +9,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Scanner;
 
 import edu.ncsu.csc216.wolf_scheduler.course.Course;
@@ -32,7 +31,9 @@ public class CourseRecordIO {
 	 * @throws FileNotFoundException if the file cannot be found or read
 	 */
 	public static ArrayList<Course> readCourseRecords(String fileName) throws FileNotFoundException {
+
 		Scanner fileReader = new Scanner(new FileInputStream(fileName)); // Create a file scanner to read the file
+
 		ArrayList<Course> courses = new ArrayList<Course>(); // Create an empty array of Course objects
 		while (fileReader.hasNextLine()) { // While we have more lines in the file
 			try { // Attempt to do the following
@@ -70,9 +71,58 @@ public class CourseRecordIO {
 		return courses;
 	}
 
-	private static Course readCourse(String nextLine) {
-		// TODO Auto-generated method stub
-		return null;
+	/**
+	 * Scans each line of the Course Record input file and creates an appropriate
+	 * Course object
+	 * 
+	 * @param line the next line in the course record input file
+	 * @return constructed course object
+	 * @throws IllegalArgumentException if file is at the end or unexpected token is
+	 *                                  read
+	 */
+	private static Course readCourse(String line) {
+
+		Scanner scan = new Scanner(line);
+
+		scan.useDelimiter(",");
+
+		try {
+
+			String name = scan.next();
+			String title = scan.next();
+			String section = scan.next();
+			int creditHours = scan.nextInt();
+			String instructorId = scan.next();
+			String meetingDays = scan.next();
+
+			if ("A".equals(meetingDays)) {
+
+				if (scan.hasNext()) {
+					scan.close();
+					throw new IllegalArgumentException("Invalid meeting day.");
+				} else {
+					scan.close();
+					return new Course(name, title, section, creditHours, instructorId, meetingDays);
+				}
+			}
+
+			else {
+
+			int startTime = scan.nextInt();
+			int endTime = scan.nextInt();
+
+			if (scan.hasNext()) {
+				scan.close();
+				throw new IllegalArgumentException("Invalid time.");
+			}
+
+			scan.close();
+			return new Course(name, title, section, creditHours, instructorId, meetingDays, startTime, endTime);
+			}
+		} catch (Exception e) {
+			scan.close();
+			throw new IllegalArgumentException();
+		}
 	}
 
 	/**

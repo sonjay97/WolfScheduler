@@ -8,10 +8,43 @@ import java.util.Objects;
 /**
  * Class constructor for the WolfScheduler program
  * 
- * @author jayshah
+ * @author Jay Shah
  *
  */
 public class Course {
+
+	/** Minimum length allowed for Course's name */
+	private static final int MIN_NAME_LENGTH = 5;
+	/** Maximum length allowed for Course's name */
+	private static final int MAX_NAME_LENGTH = 8;
+	/** Minimum length allowed for Course's character count */
+	private static final int MIN_LETTER_COUNT = 1;
+	/** Maximum length allowed for Course's character count */
+	private static final int MAX_LETTER_COUNT = 4;
+	/**
+	 * Max amount of digits allowed for entry by user when searching a Course's
+	 * number identity
+	 */
+	private static final int DIGIT_COUNT = 3;
+	/** Max amount of digits allowed for the section length. */
+	private static final int SECTION_LENGTH = 3;
+	/** Minimum amount of credits Course is allowed to have */
+	private static final int MIN_CREDITS = 3;
+	/** Maximum amount of credits Course is allowed to have */
+	private static final int MAX_CREDITS = 5;
+	/** Maximum amount of hours according to military time */
+	private static final int UPPER_HOUR = 24;
+	/** Maximum amount of minutes in an hour */
+	private static final int UPPER_MINUTE = 60;
+	/** Number to divide military time by for minutes */
+	static final int MILITARY_DIVIDER = 100;
+	/** Minimum number that determines if military time is PM or AM */
+	static final int MILITARY_PM_MINIMUM = 12;
+	/**
+	 * Categorizes minute to see if additional formatting is required for the ones
+	 * place
+	 */
+	static final int UPPER_SINGLE_DIGIT_MINUTE = 10;
 
 	/** Course's name. */
 	private String name;
@@ -31,48 +64,6 @@ public class Course {
 	private int endTime;
 
 	/**
-	 * Minimum length allowed for Course's name
-	 */
-	private static final int MIN_NAME_LENGTH = 5;
-	/**
-	 * Maximum length allowed for Course's name
-	 */
-	private static final int MAX_NAME_LENGTH = 8;
-	/**
-	 * Minimum length allowed for Course's character count
-	 */
-	private static final int MIN_LETTER_COUNT = 1;
-	/**
-	 * Maximum length allowed for Course's character count
-	 */
-	private static final int MAX_LETTER_COUNT = 4;
-	/**
-	 * Max amount of digits allowed for entry by user when searching a Course's
-	 * number identity
-	 */
-	private static final int DIGIT_COUNT = 3;
-	/**
-	 * Max amount of digits allowed for the section length.
-	 */
-	private static final int SECTION_LENGTH = 3;
-	/**
-	 * Minimum amount of credits Course is allowed to have
-	 */
-	private static final int MIN_CREDITS = 3;
-	/**
-	 * Maximum amount of credits Course is allowed to have
-	 */
-	private static final int MAX_CREDITS = 5;
-	/**
-	 * Maximum amount of hours according to military time
-	 */
-	private static final int UPPER_HOUR = 24;
-	/**
-	 * Maximum amount of minutes in an hour
-	 */
-	private static final int UPPER_MINUTE = 60;
-
-	/**
 	 * Constructs a Course object with values for all the fields.
 	 * 
 	 * @param name         name of the Course
@@ -86,14 +77,14 @@ public class Course {
 	 */
 	public Course(String name, String title, String section, int credits, String instructorId, String meetingDays,
 			int startTime, int endTime) {
-		this.name = name;
-		this.title = title;
-		this.section = section;
-		this.credits = credits;
-		this.instructorId = instructorId;
-		this.meetingDays = meetingDays; // How can I update the constructor to use the method setMeetingDaysAndTime
-		this.startTime = startTime;
-		this.endTime = endTime;
+
+		setName(name);
+		setTitle(title);
+		setSection(section);
+		setCredits(credits);
+		setInstructorId(instructorId);
+		setMeetingDaysAndTime(meetingDays, startTime, endTime);
+
 	}
 
 	/**
@@ -139,31 +130,33 @@ public class Course {
 			throw new IllegalArgumentException("Invalid course name.");
 		}
 
-		int letter_counter = 0;
-		int digit_counter = 0;
-		boolean space = false;
+		int numberOfLetters = 0;
+		int numberOfDigits = 0;
+		boolean foundSpace = false;
 
 		for (int i = 0; i < name.length(); i++) {
-			if (Character.isWhitespace(name.charAt(i))) {
+			if (!foundSpace) {
 				if (Character.isLetter(name.charAt(i))) {
-					letter_counter++;
-				} else if (Character.isWhitespace(name.charAt(i))) {
-					space = true;
+					numberOfLetters++;
+				} else if (" ".equals(String.valueOf(name.charAt(i)))) {
+					foundSpace = true;
 				} else {
 					throw new IllegalArgumentException("Invalid course name.");
 				}
-			} else if (Character.isWhitespace(name.charAt(i))) {
+			} else if (foundSpace) {
 				if (Character.isDigit(name.charAt(i))) {
-					digit_counter++;
+					numberOfDigits++;
 				} else {
 					throw new IllegalArgumentException("Invalid course name.");
 				}
 			}
 		}
-		if (letter_counter < 1 || letter_counter > 4) {
+
+		if (numberOfLetters < MIN_LETTER_COUNT || numberOfLetters > MAX_LETTER_COUNT) {
 			throw new IllegalArgumentException("Invalid course name.");
 		}
-		if (digit_counter != 3) {
+
+		if (numberOfDigits != DIGIT_COUNT) {
 			throw new IllegalArgumentException("Invalid course name.");
 		}
 
@@ -183,17 +176,15 @@ public class Course {
 	 * Sets the Course's title.
 	 * 
 	 * @param title the title to set
+	 * @throws IllegalArgumentException if the param is null or empty
 	 */
 	public void setTitle(String title) {
-		this.title = title;
 
 		if (title == null || "".equals(title)) {
 			throw new IllegalArgumentException("Invalid title.");
 		}
 
-		if (title == null || title.length() == 0) {
-			throw new IllegalArgumentException("Invalid title.");
-		}
+		this.title = title;
 	}
 
 	/**
@@ -209,19 +200,21 @@ public class Course {
 	 * Sets the Course's section.
 	 * 
 	 * @param section the section to set
+	 * @throws IllegalArgumentException if the param is null, empty, or contains a
+	 *                                  character
 	 */
 	public void setSection(String section) {
-		this.section = section;
 
-		if (section == null || section.length() != 3) {
+		if (section == null || section.length() != SECTION_LENGTH) {
 			throw new IllegalArgumentException("Invalid section.");
 		}
 
 		for (int i = 0; i < section.length(); i++) {
-			if (Character.isDigit(section.charAt(i))) {
+			if (!Character.isDigit(section.charAt(i))) {
 				throw new IllegalArgumentException("Invalid section.");
 			}
 		}
+		this.section = section;
 	}
 
 	/**
@@ -237,13 +230,16 @@ public class Course {
 	 * Sets the Course's credits.
 	 * 
 	 * @param credits the credits to set
+	 * @throws IllegalArgumentException if credits are greater than max or less than
+	 *                                  minimum
 	 */
 	public void setCredits(int credits) {
-		this.credits = credits;
 
 		if (credits > MAX_CREDITS || credits < MIN_CREDITS) {
 			throw new IllegalArgumentException("Invalid credits.");
 		}
+
+		this.credits = credits;
 	}
 
 	/**
@@ -259,23 +255,19 @@ public class Course {
 	 * Sets the Course's instructor ID.
 	 * 
 	 * @param instructorId the instructorId to set
+	 * @throws IllegalArgumentException if param is null or empty
 	 */
 	public void setInstructorId(String instructorId) {
-		this.instructorId = instructorId;
 
-		if (instructorId == null) {
+		if (instructorId == null || "".equals(instructorId)) {
 			throw new IllegalArgumentException("Invalid instructor id.");
 		}
 
-		for (int i = 0; i < instructorId.length(); i++) {
-			if (Character.isWhitespace(instructorId.charAt(i))) {
-				throw new IllegalArgumentException("Invalid instructor id.");
-			}
-		}
+		this.instructorId = instructorId;
 	}
 
 	/**
-	 * Returns the Course's meetind days.
+	 * Returns the Course's meeting days.
 	 * 
 	 * @return the meetingDays
 	 */
@@ -309,128 +301,223 @@ public class Course {
 	 * @param endTime     time the Course will end
 	 */
 	public void setMeetingDaysAndTime(String meetingDays, int startTime, int endTime) {
+
 		if (meetingDays == null || "".equals(meetingDays)) {
 			throw new IllegalArgumentException("Invalid meeting days and times.");
 		}
 
-		if (!("M".equals(meetingDays) && "T".equals(meetingDays) && "W".equals(meetingDays) && "H".equals(meetingDays)
-				&& "F".equals(meetingDays) && "A".equals(meetingDays))) {
-			throw new IllegalArgumentException("Invalid meeting days and times.");
-		}
 		if ("A".equals(meetingDays)) {
 			if (startTime != 0 || endTime != 0) {
 				throw new IllegalArgumentException("Invalid meeting days and times.");
 			}
+
+			this.meetingDays = meetingDays;
+			this.startTime = startTime;
+			this.endTime = endTime;
 		}
 
 		else {
-			int mCount = 0;
-			int tCount = 0;
-			int wCount = 0;
-			int hCount = 0;
-			int fCount = 0;
-			int aCount = 0;
 
-			for (int i = 0; i < meetingDays.length(); i++) {
-				if ("M".equals(meetingDays)) {
-					mCount++;
-				}
-				if ("T".equals(meetingDays)) {
-					tCount++;
-				}
-				if ("W".equals(meetingDays)) {
-					wCount++;
-				}
-				if ("H".equals(meetingDays)) {
-					hCount++;
-				}
-				if ("F".equals(meetingDays)) {
-					fCount++;
-				}
-				if ("A".equals(meetingDays)) {
-					aCount++;
-				} else {
-					throw new IllegalArgumentException("Invalid meeting days and times.");
-				}
-			}
-			if (mCount > 1) {
+			if (meetingDaysHasInvalidCharacters(meetingDays)) {
 				throw new IllegalArgumentException("Invalid meeting days and times.");
 			}
 
-			if (tCount > 1) {
-				throw new IllegalArgumentException("Invalid meeting days and times.");
-			}
-			if (wCount > 1) {
-				throw new IllegalArgumentException("Invalid meeting days and times.");
-			}
-			if (hCount > 1) {
-				throw new IllegalArgumentException("Invalid meeting days and times.");
-			}
-			if (fCount > 1) {
-				throw new IllegalArgumentException("Invalid meeting days and times.");
-			}
-			if (aCount > 1) {
-				throw new IllegalArgumentException("Invalid meeting days and times.");
-			}
+			this.meetingDays = meetingDays;
+			this.startTime = startTime;
+			this.endTime = endTime;
 
-			int startHour = startTime / 100;
-			int startMin = startTime % 100;
-			int endHour = endTime / 100;
-			int endMin = endTime % 100;
-
-			if (startHour < 0 || startHour > 23) {
-				throw new IllegalArgumentException("Invalid meeting days and times.");
-			}
-
-			if (startMin < 0 || startMin > 59) {
-				throw new IllegalArgumentException("Invalid meeting days and times.");
-			}
-
-			if (endHour < 0 || endHour > 23) {
-				throw new IllegalArgumentException("Invalid meeting days and times.");
-			}
-
-			if (endMin < 0 || endMin > 59) {
-				throw new IllegalArgumentException("Invalid meeting days and times.");
-			}
 		}
+
+		if (endTime < startTime) {
+			throw new IllegalArgumentException("Invalid meeting days and times.");
+		}
+
+		// calls helper method militaryTimeToHours and Minutes to make code easier to
+		// follow
+		int startTimeHour = militaryTimeToHours(startTime);
+		int startTimeMinute = militaryTimeToMinutes(startTime);
+
+		int endTimeHour = militaryTimeToHours(endTime);
+		int endTimeMinute = militaryTimeToMinutes(endTime);
+
+		if (startTimeHour < 0 || startTimeHour >= UPPER_HOUR) {
+			throw new IllegalArgumentException("Invalid meeting days and times.");
+		}
+
+		if (startTimeMinute < 0 || startTimeMinute >= UPPER_MINUTE) {
+			throw new IllegalArgumentException("Invalid meeting days and times.");
+		}
+
+		if (endTimeHour < 0 || endTimeHour >= UPPER_HOUR) {
+			throw new IllegalArgumentException("Invalid meeting days and times.");
+		}
+
+		if (endTimeMinute < 0 || endTimeMinute >= UPPER_MINUTE) {
+			throw new IllegalArgumentException("Invalid meeting days and times.");
+		}
+
+		this.meetingDays = meetingDays;
+		this.startTime = startTime;
+		this.endTime = endTime;
 	}
 
 	/**
-	 * Converts military time to standard time
+	 * takes the time passed through in military and uses final variable to convert
+	 * to standard time
 	 * 
-	 * @param startTime start time of Course
-	 * @param endTime   end time of Course
-	 * @return standard time of Course start and end
+	 * @param time time in military time
+	 * @return time hour in military time
 	 */
-	public String getMeetingString(int startTime, int endTime) {
+	public int militaryTimeToHours(int time) {
 
-		int startHour = startTime / 100;
-		int startMin = startTime % 100;
-		int endHour = endTime / 100;
-		int endMin = endTime % 100;
-		String meridian = "AM";
+		return time / MILITARY_DIVIDER;
 
-		if (startHour > 12) {
-			startHour = startHour - 12;
-			meridian = "PM";
+	}
+
+	/**
+	 * takes the time passed through in military and uses final variable to convert
+	 * to standard time
+	 * 
+	 * @param time time in military time
+	 * @return time minutes in military time
+	 */
+	public int militaryTimeToMinutes(int time) {
+		return time % MILITARY_DIVIDER;
+	}
+
+	/**
+	 * helper method to make sure meetingDays do not have invalid character amount
+	 * or type
+	 * 
+	 * @param meetingDays is the meetingDays which need to be checked
+	 * @return true if meetingDays has invalid characters and false if no invalid
+	 *         characters are found.
+	 */
+	public boolean meetingDaysHasInvalidCharacters(String meetingDays) {
+
+		boolean hasInvalidCharacters = false;
+
+		int mondayCounter = 0;
+		int tuesdayCounter = 0;
+		int wednesdayCounter = 0;
+		int thursdayCounter = 0;
+		int fridayCounter = 0;
+
+		for (int i = 0; i < meetingDays.length(); i++) {
+
+			char currentCharacter = meetingDays.charAt(i);
+
+			if (currentCharacter == 'M') {
+				mondayCounter++;
+			} else if (currentCharacter == 'T') {
+				tuesdayCounter++;
+			} else if (currentCharacter == 'W') {
+				wednesdayCounter++;
+			} else if (currentCharacter == 'H') {
+				thursdayCounter++;
+			} else if (currentCharacter == 'F') {
+				fridayCounter++;
+			} else {
+				hasInvalidCharacters = true;
+			}
 		}
 
-		if (startHour == 0) {
-			meridian = "AM";
+		if (mondayCounter > 1 || tuesdayCounter > 1 || wednesdayCounter > 1 || thursdayCounter > 1
+				|| fridayCounter > 1) {
+			hasInvalidCharacters = true;
+		}
+		return hasInvalidCharacters;
+	}
+
+	/**
+	 * Converts military time to standard time and gives a meridian string value
+	 * 
+	 * @return meetingDaysString standard time of Course start and end with meridian
+	 *         value
+	 */
+	public String getMeetingString() {
+
+		if ("A".equals(this.meetingDays)) {
+			return "Arranged";
 		}
 
-		if (endHour > 12) {
-			endHour = endHour - 12;
-			meridian = "PM";
+		String startTimeOfDayType = "AM";
+		String endTimeOfDayType = "AM";
+
+		int startTimeHour = militaryTimeToHours(this.startTime);
+		int startTimeMinute = militaryTimeToMinutes(this.startTime);
+
+		int endTimeHour = militaryTimeToHours(this.endTime);
+		int endTimeMinute = militaryTimeToMinutes(this.endTime);
+
+		String startTimeHourString;
+		String endTimeHourString;
+
+		String startTimeMinuteString;
+		String endTimeMinuteString;
+
+		if (startTimeHour >= MILITARY_PM_MINIMUM) {
+			startTimeOfDayType = "PM";
 		}
 
-		if (endHour == 0) {
-			meridian = "AM";
+		if (endTimeHour >= MILITARY_PM_MINIMUM) {
+			endTimeOfDayType = "PM";
 		}
-		// How should the new time format be returned?
-		return startHour + ":" + startMin + " " + meridian;
 
+		if (startTimeHour > MILITARY_PM_MINIMUM) {
+
+			startTimeHour -= MILITARY_PM_MINIMUM;
+
+			startTimeOfDayType = "PM";
+
+		} else if (startTimeHour == 0) {
+			startTimeHour = MILITARY_PM_MINIMUM;
+
+			startTimeOfDayType = "PM";
+
+		}
+
+		if (endTimeHour > MILITARY_PM_MINIMUM) {
+
+			endTimeHour -= MILITARY_PM_MINIMUM;
+
+			endTimeOfDayType = "PM";
+
+		} else if (startTimeHour == 0) {
+			startTimeHour = MILITARY_PM_MINIMUM;
+
+			endTimeOfDayType = "PM";
+
+		}
+
+		startTimeHourString = Integer.toString(startTimeHour);
+		endTimeHourString = Integer.toString(endTimeHour);
+
+		startTimeMinuteString = Integer.toString(startTimeMinute);
+		endTimeMinuteString = Integer.toString(endTimeMinute);
+
+		if (startTimeMinute < UPPER_SINGLE_DIGIT_MINUTE) {
+			startTimeMinuteString = "0" + startTimeMinute;
+		}
+
+		if (endTimeMinute < UPPER_SINGLE_DIGIT_MINUTE) {
+			endTimeMinuteString = "0" + endTimeMinute;
+		}
+
+		String meetingDaysString = "";
+		meetingDaysString += this.meetingDays;
+		meetingDaysString += " ";
+		meetingDaysString += startTimeHourString;
+		meetingDaysString += ":";
+		meetingDaysString += startTimeMinuteString;
+		meetingDaysString += startTimeOfDayType;
+		meetingDaysString += "-";
+		meetingDaysString += endTimeHourString;
+		meetingDaysString += ":";
+		meetingDaysString += endTimeMinuteString;
+		meetingDaysString += endTimeOfDayType;
+
+		return meetingDaysString;
 	}
 
 	/**
@@ -481,7 +568,7 @@ public class Course {
 	/**
 	 * Main left unpopulated for now.
 	 * 
-	 * @param args args command line tools not used
+	 * @param args command line arguments not used
 	 */
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
