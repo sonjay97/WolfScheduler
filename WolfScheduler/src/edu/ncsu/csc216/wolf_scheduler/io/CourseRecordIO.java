@@ -14,10 +14,12 @@ import java.util.Scanner;
 import edu.ncsu.csc216.wolf_scheduler.course.Course;
 
 /**
- * Reads Course records from text files. Writes a set of CourseRecords to a
- * file.
+ * CourseRecordIO is a input output program that implements the scanner and output utility to 
+ * read course.txt document and write .txt documents. The functionality of this class will allow 
+ * wolf scheduler to read a course catalog and store that catalog's values and create usable info 
+ * to present to the user.
  * 
- * @author jayshah
+ * @author Jay Shah (jsshah)
  */
 public class CourseRecordIO {
 
@@ -82,12 +84,17 @@ public class CourseRecordIO {
 	 */
 	private static Course readCourse(String line) {
 
+		//create scanner object
 		Scanner scan = new Scanner(line);
 
+		//change delimiter to a comma ","
 		scan.useDelimiter(",");
 
+		//try-catch block in case an processing error occurs
 		try {
 
+			//this block of code scans in the relevant data and stores it
+			//in an appropriate variable
 			String name = scan.next();
 			String title = scan.next();
 			String section = scan.next();
@@ -95,6 +102,10 @@ public class CourseRecordIO {
 			String instructorId = scan.next();
 			String meetingDays = scan.next();
 
+			//if arranged meeting day is found, check to see if there is 
+			//a token beside it, there should not be since arranged has no
+			//meeting times
+			//throw IAE if there is a time for an arranged course
 			if ("A".equals(meetingDays)) {
 
 				if (scan.hasNext()) {
@@ -106,6 +117,7 @@ public class CourseRecordIO {
 				}
 			}
 
+			//else create start time and end time and scan in the values
 			else {
 
 			int startTime = scan.nextInt();
@@ -116,6 +128,7 @@ public class CourseRecordIO {
 				throw new IllegalArgumentException("Invalid time.");
 			}
 
+			//return the new course object with relevant data scanned in
 			scan.close();
 			return new Course(name, title, section, creditHours, instructorId, meetingDays, startTime, endTime);
 			}
@@ -126,20 +139,26 @@ public class CourseRecordIO {
 	}
 
 	/**
-	 * Writes the given list of Courses to
+	 * This method will write the course object that has been populated with data
+	 * to the output file requested
 	 * 
 	 * @param fileName file to write schedule of Courses to
 	 * @param courses  list of Courses to write
 	 * @throws IOException if cannot write to file
 	 */
 	public static void writeCourseRecords(String fileName, ArrayList<Course> courses) throws IOException {
-		PrintStream fileWriter = new PrintStream(new File(fileName));
-
+		
+		//initialize print stream object which allows us to write to an output file
+		PrintStream courseWriter = new PrintStream(new File(fileName));
+		
+		//iterate through list and print one course per one line
 		for (int i = 0; i < courses.size(); i++) {
-			fileWriter.println(courses.get(i).toString());
+			courseWriter.println(courses.get(i).toString());
 		}
 
-		fileWriter.close();
+		//make sure you close courseWriter (could be any name depending on what 
+		//you initialized print stream object to)
+		courseWriter.close();
 
 	}
 }
