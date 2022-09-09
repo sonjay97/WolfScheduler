@@ -42,14 +42,14 @@ public class Course {
 	/** Maximum amount of minutes in an hour */
 	private static final int UPPER_MINUTE = 60;
 	/** Number to divide military time by for minutes */
-	static final int MILITARY_DIVIDER = 100;
+	static final int MILITARY_TIME_DIVIDE = 100;
 	/** Minimum number that determines if military time is PM or AM */
-	static final int MILITARY_PM_MINIMUM = 12;
+	static final int MILITARY_PM_TIME = 12;
 	/**
 	 * Categorizes minute to see if additional formatting is required for the ones
 	 * place
 	 */
-	static final int UPPER_SINGLE_DIGIT_MINUTE = 10;
+	static final int IS_SINGLE_DIGIT_DIVIDER = 10;
 
 	/** Course's name. */
 	private String name;
@@ -135,33 +135,33 @@ public class Course {
 			throw new IllegalArgumentException("Invalid course name.");
 		}
 
-		int numberOfLetters = 0;
-		int numberOfDigits = 0;
-		boolean foundSpace = false;
+		int letterAmount = 0;
+		int digitAmount = 0;
+		boolean isSpace = false;
 
 		for (int i = 0; i < name.length(); i++) {
-			if (!foundSpace) {
+			if (!isSpace) {
 				if (Character.isLetter(name.charAt(i))) {
-					numberOfLetters++;
+					letterAmount++;
 				} else if (" ".equals(String.valueOf(name.charAt(i)))) {
-					foundSpace = true;
+					isSpace = true;
 				} else {
 					throw new IllegalArgumentException("Invalid course name.");
 				}
-			} else if (foundSpace) {
+			} else if (isSpace) {
 				if (Character.isDigit(name.charAt(i))) {
-					numberOfDigits++;
+					digitAmount++;
 				} else {
 					throw new IllegalArgumentException("Invalid course name.");
 				}
 			}
 		}
 
-		if (numberOfLetters < MIN_LETTER_COUNT || numberOfLetters > MAX_LETTER_COUNT) {
+		if (letterAmount < MIN_LETTER_COUNT || letterAmount > MAX_LETTER_COUNT) {
 			throw new IllegalArgumentException("Invalid course name.");
 		}
 
-		if (numberOfDigits != DIGIT_COUNT) {
+		if (digitAmount != DIGIT_COUNT) {
 			throw new IllegalArgumentException("Invalid course name.");
 		}
 
@@ -323,7 +323,7 @@ public class Course {
 
 		else {
 			// call to helper method to make sure meeting days are appropriately entered
-			if (meetingDaysHasInvalidCharacters(meetingDays)) {
+			if (meetingDaysContainsInvalidCharacters(meetingDays)) {
 				throw new IllegalArgumentException("Invalid meeting days and times.");
 			}
 
@@ -339,31 +339,31 @@ public class Course {
 
 		// calls helper method militaryTimeToHours and Minutes to make code easier to
 		// follow
-		int startTimeHour = militaryTimeToHours(startTime);
-		int startTimeMinute = militaryTimeToMinutes(startTime);
+		int startHour = militaryTimeToHours(startTime);
+		int startMinute = militaryTimeToMinutes(startTime);
 
 		// calls helper method militaryTimeToHours and Minutes to make code easier to
 		// follow
-		int endTimeHour = militaryTimeToHours(endTime);
-		int endTimeMinute = militaryTimeToMinutes(endTime);
+		int endHour = militaryTimeToHours(endTime);
+		int endMinute = militaryTimeToMinutes(endTime);
 
 		// checks to ensure start time is valid and within the upper and lower limits
-		if (startTimeHour < 0 || startTimeHour >= UPPER_HOUR) {
+		if (startHour < 0 || startHour >= UPPER_HOUR) {
 			throw new IllegalArgumentException("Invalid meeting days and times.");
 		}
 
 		// checks to ensure start time is valid and within the upper and lower limits
-		if (startTimeMinute < 0 || startTimeMinute >= UPPER_MINUTE) {
+		if (startMinute < 0 || startMinute >= UPPER_MINUTE) {
 			throw new IllegalArgumentException("Invalid meeting days and times.");
 		}
 
 		// checks to ensure end time is valid and within the upper and lower limits
-		if (endTimeHour < 0 || endTimeHour >= UPPER_HOUR) {
+		if (endHour < 0 || endHour >= UPPER_HOUR) {
 			throw new IllegalArgumentException("Invalid meeting days and times.");
 		}
 
 		// checks to ensure end time is valid and within the upper and lower limits
-		if (endTimeMinute < 0 || endTimeMinute >= UPPER_MINUTE) {
+		if (endMinute < 0 || endMinute >= UPPER_MINUTE) {
 			throw new IllegalArgumentException("Invalid meeting days and times.");
 		}
 
@@ -381,7 +381,7 @@ public class Course {
 	 */
 	public int militaryTimeToHours(int time) {
 
-		return time / MILITARY_DIVIDER;
+		return time / MILITARY_TIME_DIVIDE;
 
 	}
 
@@ -393,7 +393,7 @@ public class Course {
 	 * @return time minutes in military time
 	 */
 	public int militaryTimeToMinutes(int time) {
-		return time % MILITARY_DIVIDER;
+		return time % MILITARY_TIME_DIVIDE;
 	}
 
 	/**
@@ -404,16 +404,16 @@ public class Course {
 	 * @return true if meetingDays has invalid characters and false if no invalid
 	 *         characters are found.
 	 */
-	public boolean meetingDaysHasInvalidCharacters(String meetingDays) {
+	public boolean meetingDaysContainsInvalidCharacters(String meetingDays) {
 
-		boolean hasInvalidCharacters = false;
+		boolean containsInvalidChar = false;
 		
 		//initialize counters for course days
-		int mondayCounter = 0;
-		int tuesdayCounter = 0;
-		int wednesdayCounter = 0;
-		int thursdayCounter = 0;
-		int fridayCounter = 0;
+		int mCount = 0;
+		int tCount = 0;
+		int wCount = 0;
+		int thCount = 0;
+		int fCount = 0;
 		
 		//iterate through the meeting days input
 		for (int i = 0; i < meetingDays.length(); i++) {
@@ -422,27 +422,27 @@ public class Course {
 			
 			//compare iteration of string to each character possible and increase count
 			if (currentCharacter == 'M') {
-				mondayCounter++;
+				mCount++;
 			} else if (currentCharacter == 'T') {
-				tuesdayCounter++;
+				tCount++;
 			} else if (currentCharacter == 'W') {
-				wednesdayCounter++;
+				wCount++;
 			} else if (currentCharacter == 'H') {
-				thursdayCounter++;
+				thCount++;
 			} else if (currentCharacter == 'F') {
-				fridayCounter++;
+				fCount++;
 			} else {
-				hasInvalidCharacters = true;
+				containsInvalidChar = true;
 			}
 		}
 		
 		//easy if statement to check if invalid characters are present
-		if (mondayCounter > 1 || tuesdayCounter > 1 || wednesdayCounter > 1 || thursdayCounter > 1
-				|| fridayCounter > 1) {
-			hasInvalidCharacters = true;
+		if (mCount > 1 || tCount > 1 || wCount > 1 || thCount > 1
+				|| fCount > 1) {
+			containsInvalidChar = true;
 		}
 		//return boolean value back to setMeetingDaysAndTime method
-		return hasInvalidCharacters;
+		return containsInvalidChar;
 	}
 
 	/**
@@ -463,87 +463,87 @@ public class Course {
 		//"any" in this case means that it does not matter if it is am or pm
 		//because it will be potentially changed in the below if statements
 		//for this case we are using "AM" but it could also be "PM"
-		String startTimeOfDayType = "AM";
-		String endTimeOfDayType = "AM";
+		String startTimeDayValue = "AM";
+		String endTimeDayValue = "AM";
 		
 		//call helper method to convert start time to standard time
-		int startTimeHour = militaryTimeToHours(this.startTime);
-		int startTimeMinute = militaryTimeToMinutes(this.startTime);
+		int startHour = militaryTimeToHours(this.startTime);
+		int startMinute = militaryTimeToMinutes(this.startTime);
 		
 		//call helper method to convert end time to standard time
-		int endTimeHour = militaryTimeToHours(this.endTime);
-		int endTimeMinute = militaryTimeToMinutes(this.endTime);
+		int endHour = militaryTimeToHours(this.endTime);
+		int endMinute = militaryTimeToMinutes(this.endTime);
 
 		//create new variable where we can store standard time as a string
-		String startTimeHourString;
-		String endTimeHourString;
+		String startHourString;
+		String endHourString;
 
 		//create a new variable where we can store standard time as a string
-		String startTimeMinuteString;
-		String endTimeMinuteString;
+		String startMinuteString;
+		String endMinuteString;
 
 		//compares start time hour to 12 to see if it should have a PM meridian value
-		if (startTimeHour >= MILITARY_PM_MINIMUM) {
-			startTimeOfDayType = "PM";
+		if (startHour >= MILITARY_PM_TIME) {
+			startTimeDayValue = "PM";
 		}
 		
 		//compares end time hour to 12 to see if it should have a PM meridian value
-		if (endTimeHour >= MILITARY_PM_MINIMUM) {
-			endTimeOfDayType = "PM";
+		if (endHour >= MILITARY_PM_TIME) {
+			endTimeDayValue = "PM";
 		}
 		
 		//compares start time hour to 12 and if it is greater than 12, but not equal, 
 		//subtract 12 and add PM meridian value
-		if (startTimeHour > MILITARY_PM_MINIMUM) {
+		if (startHour > MILITARY_PM_TIME) {
 
-			startTimeHour -= MILITARY_PM_MINIMUM;
+			startHour -= MILITARY_PM_TIME;
 
-			startTimeOfDayType = "PM";
+			startTimeDayValue = "PM";
 
 		//if start time hour is 0 then time is midnight
-		} else if (startTimeHour == 0) {
-			startTimeHour = MILITARY_PM_MINIMUM;
+		} else if (startHour == 0) {
+			startHour = MILITARY_PM_TIME;
 
-			startTimeOfDayType = "PM";
+			startTimeDayValue = "PM";
 
 		}
 
 		//if end time hour is greater than 12 but not equal then subtract 12
 		//and add PM meridian tag
-		if (endTimeHour > MILITARY_PM_MINIMUM) {
+		if (endHour > MILITARY_PM_TIME) {
 
-			endTimeHour -= MILITARY_PM_MINIMUM;
+			endHour -= MILITARY_PM_TIME;
 
-			endTimeOfDayType = "PM";
+			endTimeDayValue = "PM";
 
 		//if start time hour is 0 then it is midnight
-		} else if (startTimeHour == 0) {
-			startTimeHour = MILITARY_PM_MINIMUM;
+		} else if (startHour == 0) {
+			startHour = MILITARY_PM_TIME;
 
-			endTimeOfDayType = "PM";
+			endTimeDayValue = "PM";
 
 		}
 
 		//convert int to string
-		startTimeHourString = Integer.toString(startTimeHour);
-		endTimeHourString = Integer.toString(endTimeHour);
+		startHourString = Integer.toString(startHour);
+		endHourString = Integer.toString(endHour);
 
 		//convert int to string
-		startTimeMinuteString = Integer.toString(startTimeMinute);
-		endTimeMinuteString = Integer.toString(endTimeMinute);
+		startMinuteString = Integer.toString(startMinute);
+		endMinuteString = Integer.toString(endMinute);
 
 		//if start time minute has a ones place not divisible by 0 (no number
 		//in the ones place is cleanly divisible by 0)
 		//then concatenate a 0 and add the ones place number to get a leading zero
 		//value
-		if (startTimeMinute < UPPER_SINGLE_DIGIT_MINUTE) {
-			startTimeMinuteString = "0" + startTimeMinute;
+		if (startMinute < IS_SINGLE_DIGIT_DIVIDER) {
+			startMinuteString = "0" + startMinute;
 		}
 		
 		//same thing as above, except for now we are working with the end time
 		//minute
-		if (endTimeMinute < UPPER_SINGLE_DIGIT_MINUTE) {
-			endTimeMinuteString = "0" + endTimeMinute;
+		if (endMinute < IS_SINGLE_DIGIT_DIVIDER) {
+			endMinuteString = "0" + endMinute;
 		}
 		
 		//this block of code concatenates the all the times above to create one final
@@ -551,15 +551,15 @@ public class Course {
 		String meetingDaysString = "";
 		meetingDaysString += this.meetingDays;
 		meetingDaysString += " ";
-		meetingDaysString += startTimeHourString;
+		meetingDaysString += startHourString;
 		meetingDaysString += ":";
-		meetingDaysString += startTimeMinuteString;
-		meetingDaysString += startTimeOfDayType;
+		meetingDaysString += startMinuteString;
+		meetingDaysString += startTimeDayValue;
 		meetingDaysString += "-";
-		meetingDaysString += endTimeHourString;
+		meetingDaysString += endHourString;
 		meetingDaysString += ":";
-		meetingDaysString += endTimeMinuteString;
-		meetingDaysString += endTimeOfDayType;
+		meetingDaysString += endMinuteString;
+		meetingDaysString += endTimeDayValue;
 
 		return meetingDaysString;
 	}

@@ -15,15 +15,10 @@ import edu.ncsu.csc216.wolf_scheduler.io.CourseRecordIO;
  * removing courses from schedule, setting schedule title, getting schedule title, 
  * presenting activities, and adding events.
  * 
- * @author Jay Sha (jsshah)
+ * @author Jay Shah (jsshah)
  *
  */
 public class WolfScheduler {
-	
-	/** Number of columns in the 2D array for Course objects */
-	static final int COLUMNS_FOR_ACTIVITY_OBJECTS = 4;
-	/** Number of columns for a 2D array for a full schedule of activities */
-	static final int COLUMNS_FOR_FULL_ACTIVITY_OBJECTS = 7;
 	
 	/** courses available for use with scheduler and registration */
 	private ArrayList<Course> courseCatalog;
@@ -96,19 +91,19 @@ public class WolfScheduler {
 		int numCol = 3;
 		
 		//create a string array with one row per course and three columns
-		String[][] schedStr = new String[numRow][numCol];
+		String[][] scheduleString = new String[numRow][numCol];
 		
 		//iterate through schedule and fill each column with relevant data!
 		for (int i = 0; i < numRow; i++) {
 			
-			schedStr[i][0] = this.schedule.get(i).getName();
+			scheduleString[i][0] = this.schedule.get(i).getName();
 			
-			schedStr[i][1] = this.schedule.get(i).getSection();
+			scheduleString[i][1] = this.schedule.get(i).getSection();
 			
-			schedStr[i][2] = this.schedule.get(i).getTitle();
+			scheduleString[i][2] = this.schedule.get(i).getTitle();
 		}
 		
-		return schedStr;
+		return scheduleString;
 	}
 	
 	/**
@@ -134,21 +129,21 @@ public class WolfScheduler {
 		
 		//creating a string array with one row per course in the catalog
 		//and three columns
-		String[][] catStr = new String[numRow][numCol];
+		String[][] catalogString = new String[numRow][numCol];
 		
 		//iterate through the catalog, find the relevant and pertinent data for each course
 		//then add the data to the 2D array
 		for (int i = 0; i < numRow; i++) {
 			//adding course name
-			catStr[i][0] = this.courseCatalog.get(i).getName();
+			catalogString[i][0] = this.courseCatalog.get(i).getName();
 			//adding the course section to the array
-			catStr[i][1] = this.courseCatalog.get(i).getSection();
+			catalogString[i][1] = this.courseCatalog.get(i).getSection();
 			//adding the course title to array
-			catStr[i][2] = this.courseCatalog.get(i).getTitle();
+			catalogString[i][2] = this.courseCatalog.get(i).getTitle();
 			//for loop will continue to add data for the next courses in the catalog
 		}
 		
-		return catStr;
+		return catalogString;
 	}
 	
 	/**
@@ -172,31 +167,31 @@ public class WolfScheduler {
 		//and meeting times)
 		int numCol = 6;
 		
-		String[][] fullSchedStr = new String[numRow][numCol];
+		String[][] fullScheduleString = new String[numRow][numCol];
 		
 		//iterate through array and add to schedule
 		for (int i = 0; i < numRow; i++) {
 			
 			//adds course name to schedule
-			fullSchedStr[i][0] = this.schedule.get(i).getName();
+			fullScheduleString[i][0] = this.schedule.get(i).getName();
 			
 			//adds section to schedule
-			fullSchedStr[i][1] = this.schedule.get(i).getSection();
+			fullScheduleString[i][1] = this.schedule.get(i).getSection();
 			
 			//adds title to schedule
-			fullSchedStr[i][2] = this.schedule.get(i).getTitle();
+			fullScheduleString[i][2] = this.schedule.get(i).getTitle();
 			
 			//adds credit hours to schedule
-			fullSchedStr[i][3] = "" + this.schedule.get(i).getCredits();
+			fullScheduleString[i][3] = "" + this.schedule.get(i).getCredits();
 			
 			
 			//adds instructor id to schedule
-			fullSchedStr[i][4] = this.schedule.get(i).getInstructorId();
+			fullScheduleString[i][4] = this.schedule.get(i).getInstructorId();
 			
 			//adds meeting times to schedule
-			fullSchedStr[i][5] = this.schedule.get(i).getMeetingString();
+			fullScheduleString[i][5] = this.schedule.get(i).getMeetingString();
 		}
-		return fullSchedStr;
+		return fullScheduleString;
 	}
 	
 	/**
